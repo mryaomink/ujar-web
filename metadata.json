@@ -1,0 +1,6 @@
+{
+  "name": "UJAR - Spatial Social Network",
+  "description": "Landing page for UJAR, a location-based ephemeral digital graffiti network with tactical aesthetics.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": []
+}
