@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Crosshair, MapPin, Radio, Lock, Unlock, Clock,
-  ShieldAlert, Radar, Users, CornerDownRight, Variable, Check, Activity
+  ShieldAlert, Radar, Users, CornerDownRight, Variable, Check, Activity,
+  Terminal, Globe, Zap, Cpu
 } from 'lucide-react';
 import LiveMap from './components/LiveMap';
 import IntroPage from './components/IntroPage';
@@ -217,6 +218,232 @@ const TimeSliderShowcase = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const SystemOverrideShowcase = () => {
+  const [view, setView] = useState<'sender' | 'receiver'>('sender');
+  const [progress, setProgress] = useState(0);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [isHacking, setIsHacking] = useState(false);
+
+  const hackLogs = [
+    "MENEMBUS FILTER LOKASI...",
+    "MENCARI CELAH JARINGAN...",
+    "INJEKSI DATA KE GRID UTAMA...",
+    "MENGHUBUNGKAN KE SATELIT...",
+    "MENGAKTIFKAN SINYAL GLOBAL...",
+    "OVERRIDE BERHASIL."
+  ];
+
+  useEffect(() => {
+    if (view === 'sender' && isHacking) {
+      setLogs([]);
+      setProgress(0);
+      let logIndex = 0;
+      const logInterval = setInterval(() => {
+        if (logIndex < hackLogs.length) {
+          setLogs(prev => [...prev, hackLogs[logIndex]]);
+          logIndex++;
+          setProgress((logIndex / hackLogs.length) * 100);
+        } else {
+          clearInterval(logInterval);
+          setTimeout(() => setView('receiver'), 1500);
+        }
+      }, 800);
+      return () => clearInterval(logInterval);
+    }
+  }, [view, isHacking]);
+
+  useEffect(() => {
+    if (view === 'receiver') {
+      setIsHacking(false);
+      const timer = setTimeout(() => {
+        // Reset to sender for loop if needed, but let's just stay here for a bit
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [view]);
+
+  return (
+    <div className="border border-tactical-gray relative overflow-hidden bg-tactical-black min-h-[400px] flex flex-col group hover:border-tactical-cyan transition-colors rounded-sm h-full">
+      <div className="flex justify-between items-center bg-tactical-gray/10 p-3 border-b border-tactical-gray z-20">
+        <div className="flex gap-2">
+          <button
+            onClick={() => setView('sender')}
+            className={`px-3 py-1 font-mono text-[10px] border ${view === 'sender' ? 'bg-tactical-cyan text-tactical-black border-tactical-cyan' : 'text-tactical-cyan border-tactical-cyan/30'}`}
+          >
+            SENDER VIEW
+          </button>
+          <button
+            onClick={() => setView('receiver')}
+            className={`px-3 py-1 font-mono text-[10px] border ${view === 'receiver' ? 'bg-tactical-cyan text-tactical-black border-tactical-cyan' : 'text-tactical-cyan border-tactical-cyan/30'}`}
+          >
+            RECEIVER VIEW
+          </button>
+        </div>
+        <div className="text-[10px] font-mono text-tactical-amber animate-pulse">
+          {view === 'sender' ? 'TERMINAL: ACTIVE' : 'OVERRIDE DETECTED'}
+        </div>
+      </div>
+
+      <div className="flex-grow relative overflow-hidden flex flex-col">
+        <AnimatePresence mode="wait">
+          {view === 'sender' ? (
+            <motion.div
+              key="sender"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex-grow p-6 font-mono text-xs flex flex-col"
+            >
+              <div className="scanlines absolute inset-0 pointer-events-none opacity-20"></div>
+
+              {/* ASCII Art Header */}
+              <div className="text-[6px] sm:text-[8px] leading-tight text-tactical-cyan mb-4 opacity-80 whitespace-pre animate-pulse">
+                {`
+ _   _  _____  ___  ____  
+| | | ||  _  |/ _ \\ |  _ \\ 
+| | | || | | | /_\\ \\| |_) |
+| |_| || |/ /|  _  ||  _ < 
+ \\___/ |___/ |_| |_||_| \\_\\
+ SYSTEM OVERRIDE ACTIVE
+                `}
+              </div>
+
+              {!isHacking ? (
+                <div className="flex flex-col items-center justify-center flex-grow space-y-6">
+                  <Cpu size={48} className="text-tactical-cyan/40" />
+                  <p className="text-center text-tactical-light/60 max-w-[200px]">
+                    Satu kesempatan untuk broadcast ke seluruh dunia.
+                  </p>
+                  <button
+                    onClick={() => setIsHacking(true)}
+                    className="px-6 py-2 border-2 border-tactical-cyan text-tactical-cyan hover:bg-tactical-cyan hover:text-tactical-black transition-all uppercase tracking-widest font-bold shadow-[0_0_15px_rgba(0,229,255,0.2)]"
+                  >
+                    Mulai Injeksi
+                  </button>
+                </div>
+              ) : (
+                <div className="flex-grow flex flex-col justify-between">
+                  <div className="space-y-2 overflow-y-auto max-h-[150px]">
+                    {logs.map((log, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ x: -10, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        className="flex items-center gap-2"
+                      >
+                        <span className="text-tactical-cyan">{">"}</span>
+                        <span className={i === logs.length - 1 ? 'text-tactical-light' : 'text-tactical-light/40'}>{log}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-2 mt-4">
+                    <div className="flex justify-between text-[10px] text-tactical-cyan">
+                      <span>UPLOADING SIGNAL...</span>
+                      <span>{Math.round(progress)}%</span>
+                    </div>
+                    <div className="w-full h-1 bg-tactical-gray/30 overflow-hidden">
+                      <motion.div
+                        className="h-full bg-tactical-cyan shadow-[0_0_10px_#00E5FF]"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="receiver"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex-grow relative flex items-center justify-center bg-[radial-gradient(circle_at_center,_#1a1a2e_0%,_#0a0a0a_100%)] overflow-hidden"
+            >
+              {/* Tactical Grid Background */}
+              <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:30px_30px]" />
+
+              {/* Radar Sweep Effect */}
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 opacity-20 bg-[conic-gradient(from_0deg,transparent_90%,#00E5FF_100%)] rounded-full"
+                style={{ width: '200%', height: '200%', top: '-50%', left: '-50%' }}
+              />
+
+              {/* Message Content */}
+              <div className="z-10 w-full max-w-[280px] space-y-6">
+                <div className="relative flex justify-center">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 w-16 h-16 bg-tactical-cyan/20 blur-xl rounded-full"
+                  />
+                  <div className="relative p-3 bg-tactical-black/40 border border-tactical-cyan/30 rounded-full backdrop-blur-md">
+                    <Radio size={32} className="text-tactical-cyan" />
+                  </div>
+                </div>
+
+                <div className="bg-tactical-black/60 backdrop-blur-xl border border-tactical-cyan/20 p-5 rounded-sm shadow-2xl relative">
+                  <div className="text-[10px] font-mono text-tactical-cyan mb-3 flex justify-between items-center">
+                    <span>INCOMING BROADCAST</span>
+                    <span className="flex items-center gap-1"><Activity size={8} className="animate-pulse" /> LIVE</span>
+                  </div>
+
+                  <p className="font-mono text-sm leading-relaxed text-tactical-light">
+                    <TypewriterText text="SEMUA MATA TERTUJU PADA DUNIA NYATA. TEMUKAN JAWABANNYA DI KOORDINAT INI." />
+                  </p>
+
+                  <div className="mt-6 space-y-2">
+                    <div className="flex justify-between text-[8px] font-mono text-tactical-light/40 uppercase">
+                      <span>Signal Expiration</span>
+                      <span className="text-tactical-amber">24s</span>
+                    </div>
+                    <div className="w-full h-[2px] bg-tactical-gray/30">
+                      <motion.div
+                        className="h-full bg-tactical-cyan"
+                        initial={{ width: '100%' }}
+                        animate={{ width: '0%', backgroundColor: ['#00E5FF', '#FFB300'] }}
+                        transition={{ duration: 30, ease: "linear" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+const TypewriterText = ({ text }: { text: string }) => {
+  const [displayedText, setDisplayedText] = useState('');
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(text.slice(0, i));
+      i++;
+      if (i > text.length) clearInterval(interval);
+    }, 50);
+    return () => clearInterval(interval);
+  }, [text]);
+
+  return (
+    <>
+      {displayedText}
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ duration: 0.5, repeat: Infinity }}
+        className="inline-block w-2 h-4 bg-tactical-cyan align-middle ml-1"
+      />
+    </>
   );
 };
 
@@ -446,6 +673,16 @@ export default function App() {
                 </p>
                 <TimeSliderShowcase />
               </motion.div>
+
+              <motion.div variants={itemVariants} className="flex flex-col lg:col-span-2">
+                <h3 className="font-mono text-xl mb-3 text-tactical-light flex items-center gap-3 uppercase tracking-wide">
+                  <ShieldAlert className="text-tactical-amber" size={20} />System Override (Global Broadcast)
+                </h3>
+                <p className="text-tactical-light/70 text-sm font-sans mb-6 leading-relaxed">
+                  Fitur broadcast teks global yang memungkinkan kamu mengirim satu pesan yang dapat dibaca oleh <b className="text-tactical-light">semua pengguna UJAR di seluruh dunia</b>, tanpa batasan lokasi. Setiap akun hanya memiliki <b className="text-tactical-amber">satu kali kesempatan</b> seumur hidup.
+                </p>
+                <SystemOverrideShowcase />
+              </motion.div>
             </motion.div>
           </section>
 
@@ -467,7 +704,7 @@ export default function App() {
               <motion.div
                 variants={itemVariants}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="border border-tactical-cyan/40 p-8 bg-tactical-cyan/5 transition-all group relative overflow-hidden cursor-default shadow-lg hover:shadow-[0_10px_30px_rgba(0,229,255,0.15)] hover:border-tactical-cyan"
+                className="border border-tactical-cyan/40 p-8 bg-tactical-cyan/5 transition-all group relative overflow-hidden cursor-default shadow-lg hover:shadow-[0_10px_30_rgba(0,229,255,0.15)] hover:border-tactical-cyan"
               >
                 <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:opacity-10 transition-all group-hover:rotate-12 group-hover:scale-110">
                   <Crosshair size={140} />
@@ -487,7 +724,7 @@ export default function App() {
               <motion.div
                 variants={itemVariants}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="border border-tactical-amber/40 p-8 bg-tactical-amber/5 transition-all group relative overflow-hidden cursor-default shadow-lg hover:shadow-[0_10px_30px_rgba(255,179,0,0.15)] hover:border-tactical-amber"
+                className="border border-tactical-amber/40 p-8 bg-tactical-amber/5 transition-all group relative overflow-hidden cursor-default shadow-lg hover:shadow-[0_10px_30_rgba(255,179,0,0.15)] hover:border-tactical-amber"
               >
                 <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:opacity-10 transition-all group-hover:-rotate-12 group-hover:scale-110">
                   <MapPin size={140} />
@@ -507,7 +744,7 @@ export default function App() {
               <motion.div
                 variants={itemVariants}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="border border-tactical-light/30 p-8 bg-tactical-gray/20 transition-all group relative overflow-hidden cursor-default shadow-lg hover:shadow-[0_10px_30px_rgba(255,255,255,0.1)] hover:border-tactical-light"
+                className="border border-tactical-light/30 p-8 bg-tactical-gray/20 transition-all group relative overflow-hidden cursor-default shadow-lg hover:shadow-[0_10px_30_rgba(255,255,255,0.1)] hover:border-tactical-light"
               >
                 <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:opacity-10 transition-all group-hover:scale-110">
                   <Variable size={140} />
@@ -578,4 +815,3 @@ export default function App() {
     </>
   );
 }
-
