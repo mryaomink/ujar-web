@@ -524,10 +524,10 @@ export default function App() {
                 Panduan
               </button>
               <button
-                onClick={() => scrollToSection('mulai')}
+                onClick={() => window.location.href = 'https://ujar-webapp.vercel.app/'}
                 className="border border-tactical-cyan/40 text-tactical-cyan px-3 sm:px-6 py-1.5 sm:py-2 hover:bg-tactical-cyan hover:text-tactical-black transition-all shadow-[0_0_10px_rgba(0,229,255,0.1)] hover:shadow-[0_0_20px_rgba(0,229,255,0.4)] bg-tactical-cyan/5"
               >
-                MULAI<span className="hidden sm:inline"> BROADCAST</span>
+                MAINKAN SEKARANG
               </button>
             </div>
           </div>
@@ -780,7 +780,10 @@ export default function App() {
                 Pemancar UJAR sudah menyala. Cerita tersembunyi berlimpah di sekitar kotamu. Nyalakan GPS, aktifkan akunmu, dan mulai menjelajah dunia nyata sekarang.
               </p>
 
-              <button className="group relative px-10 py-5 bg-transparent border-2 border-tactical-cyan text-tactical-cyan font-mono tracking-widest uppercase text-base font-bold overflow-hidden flex items-center gap-3 hover:text-tactical-black transition-colors transform hover:scale-105 active:scale-95">
+              <button 
+                onClick={() => window.location.href = 'https://ujar-webapp.vercel.app/'}
+                className="group relative px-10 py-5 bg-transparent border-2 border-tactical-cyan text-tactical-cyan font-mono tracking-widest uppercase text-base font-bold overflow-hidden flex items-center gap-3 hover:text-tactical-black transition-colors transform hover:scale-105 active:scale-95"
+              >
                 <span className="absolute inset-x-0 bottom-0 h-0 bg-tactical-cyan transition-all duration-300 ease-out group-hover:h-full z-0" />
                 <span className="relative z-10 flex items-center gap-3 drop-shadow-[0_0_8px_rgba(0,229,255,0.8)] group-hover:drop-shadow-none">
                   <Check size={20} /> MULAI MAIN SEKARANG
