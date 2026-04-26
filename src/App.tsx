@@ -5,6 +5,7 @@ import {
   ShieldAlert, Radar, Users, CornerDownRight, Variable, Check, Activity,
   Terminal, Globe, Zap, Cpu
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import LiveMap from './components/LiveMap';
 import IntroPage from './components/IntroPage';
 
@@ -815,6 +816,7 @@ export default function App() {
           </div>
         </footer>
       </div>
+      <Analytics />
     </>
   );
 }
